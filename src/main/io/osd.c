@@ -2457,6 +2457,35 @@ static bool osdDrawSingleElement(uint8_t item)
         }
 #endif
 
+    case OSD_EFFICIENCY_MAX_DIST:
+        {
+            buff[0] = SYM_TRIP_DIST;
+            if (STATE(GPS_FIX) && gpsSol.groundSpeed > 0 && currentBatteryProfile->capacity.value > 0) {
+                // Amperage (or Power) is in centi amps (or centi wh), speed is in cms/s, capacity is in mAh or mWh.
+                static pt1Filter_t eFilterState;
+                static timeUs_t maxDistUpdated;
+                int32_t value = 0;
+                timeUs_t currentTimeUs = micros();
+                timeDelta_t maxDistTimeDelta = cmpTimeUs(currentTimeUs, maxDistUpdated);
+
+                if (maxDistTimeDelta >= EFFICIENCY_UPDATE_INTERVAL) {
+                    float energy = (float)(currentBatteryProfile->capacity.unit == BAT_CAPACITY_UNIT_MAH ? getAmperage() : getPower());
+                    uint32_t batteryOffset = currentBatteryProfile->capacity.critical;
+                    uint32_t battery = (currentBatteryProfile->capacity.value - batteryOffset) * 10;
+                    value = pt1FilterApply4(&eFilterState, (battery / energy) * (gpsSol.groundSpeed / 0.0036f),
+                        1, maxDistTimeDelta * 1e-6f);
+
+                    maxDistUpdated = currentTimeUs;
+                } else {
+                    value = eFilterState.state;
+                }
+                osdFormatDistanceSymbol(&buff[1], value);
+            } else {
+                tfp_sprintf(buff + 1, " NA");
+            }
+            break;
+        }
+
     default:
         return false;
     }
@@ -2639,6 +2668,7 @@ void pgResetFn_osdLayoutsConfig(osdLayoutsConfig_t *osdLayoutsConfig)
     osdLayoutsConfig->item_pos[0][OSD_BATTERY_REMAINING_CAPACITY] = OSD_POS(1, 6);
     osdLayoutsConfig->item_pos[0][OSD_BATTERY_REMAINING_PERCENT] = OSD_POS(1, 7);
     osdLayoutsConfig->item_pos[0][OSD_POWER_SUPPLY_IMPEDANCE] = OSD_POS(1, 8);
+    osdLayoutsConfig->item_pos[0][OSD_EFFICIENCY_MAX_DIST] = OSD_POS(1, 5);
 
     osdLayoutsConfig->item_pos[0][OSD_EFFICIENCY_MAH_PER_KM] = OSD_POS(1, 5);
     osdLayoutsConfig->item_pos[0][OSD_EFFICIENCY_WH_PER_KM] = OSD_POS(1, 5);
