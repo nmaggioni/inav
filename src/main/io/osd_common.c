@@ -27,6 +27,7 @@
 #include "platform.h"
 
 #include "common/utils.h"
+#include "common/vector.h"
 
 #include "drivers/display.h"
 #include "drivers/display_canvas.h"
@@ -149,6 +150,18 @@ void osdDrawSidebars(displayPort_t *display, displayCanvas_t *canvas)
     UNUSED(canvas);
 #endif
     osdGridDrawSidebars(display);
+}
+
+void osdDrawSlipIndicator(displayPort_t *display, displayCanvas_t *canvas, const osdDrawPoint_t *p, fpVector3_t *imuMeasuredAccelBF)
+{
+#if defined(USE_CANVAS)
+    if (canvas) {
+        osdCanvasDrawSlipIndicator(display, canvas, p, imuMeasuredAccelBF);
+    }
+#else
+    UNUSED(display);
+    UNUSED(canvas);
+#endif
 }
 
 #endif

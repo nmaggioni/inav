@@ -306,6 +306,10 @@ static const OSD_Entry menuOsdElemsEntries[] =
     OSD_ELEMENT_ENTRY("ESC TEMPERATURE", OSD_ESC_TEMPERATURE),
 #endif
 
+#ifdef USE_CANVAS
+    OSD_ELEMENT_ENTRY("SLIP INDICATOR", OSD_SLIP_INDICATOR),
+#endif
+
     OSD_BACK_AND_END_ENTRY,
 };
 

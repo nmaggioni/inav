@@ -2412,6 +2412,14 @@ static bool osdDrawSingleElement(uint8_t item)
         }
 #endif
 
+#ifdef USE_CANVAS
+    case OSD_SLIP_INDICATOR:
+        {
+            osdDrawSlipIndicator(osdDisplayPort, osdGetDisplayPortCanvas(), OSD_DRAW_POINT_GRID(elemPosX, elemPosY), &imuMeasuredAccelBF);
+            return true;
+        }
+#endif
+
     default:
         return false;
     }
@@ -2707,6 +2715,10 @@ void pgResetFn_osdLayoutsConfig(osdLayoutsConfig_t *osdLayoutsConfig)
 
 #if defined(USE_RX_MSP) && defined(USE_MSP_RC_OVERRIDE)
     osdLayoutsConfig->item_pos[0][OSD_RC_SOURCE] = OSD_POS(3, 4);
+#endif
+
+#ifdef USE_CANVAS
+    osdLayoutsConfig->item_pos[0][OSD_SLIP_INDICATOR] = OSD_POS(3, 4);
 #endif
 
     // Under OSD_FLYMODE. TODO: Might not be visible on NTSC?

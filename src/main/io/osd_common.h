@@ -29,6 +29,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "common/vector.h"
+
 #define OSD_VARIO_CM_S_PER_ARROW 50 // 1 arrow = 50cm/s
 #define OSD_VARIO_HEIGHT_ROWS 5
 
@@ -82,3 +84,5 @@ void osdDrawArtificialHorizon(displayPort_t *display, displayCanvas_t *canvas, c
 // grid slots.
 void osdDrawHeadingGraph(displayPort_t *display, displayCanvas_t *canvas, const osdDrawPoint_t *p, int heading);
 void osdDrawSidebars(displayPort_t *display, displayCanvas_t *canvas);
+
+void osdDrawSlipIndicator(displayPort_t *display, displayCanvas_t *canvas, const osdDrawPoint_t *p, fpVector3_t *imuMeasuredAccelBF);

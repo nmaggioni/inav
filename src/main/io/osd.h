@@ -215,6 +215,7 @@ typedef enum {
     OSD_GVAR_1,
     OSD_GVAR_2,
     OSD_GVAR_3,
+    OSD_SLIP_INDICATOR,
     OSD_ITEM_COUNT // MUST BE LAST
 } osd_items_e;
 

@@ -709,4 +709,59 @@ bool osdCanvasDrawSidebars(displayPort_t *display, displayCanvas_t *canvas)
     return false;
 }
 
+void osdCanvasDrawSlipIndicator(displayPort_t *display, displayCanvas_t *canvas, const osdDrawPoint_t *p, fpVector3_t *imuMeasuredAccelBF)
+{
+    UNUSED(display);
+
+    int width = 5 * canvas->gridElementWidth - 2;  // Account for stroke outlines
+    int height = canvas->gridElementHeight - 2;  // Account for stroke outlines
+    int ball_diameter = height - 2;
+
+    int px, py;
+    osdDrawPointGetPixels(&px, &py, display, canvas, p);
+    displayCanvasClipToRect(canvas, px, py, width + 2, height + 2);
+
+    // Angle between the apparent weight vector and the aircraft's vertical
+    // plane at which the ball will be touching either side of the indicator
+    int max_offset_at_degrees = 20;
+
+    // Apparent weight vector roll angle (resultant of the Z and Y components of the acc measurements)
+    float roll_acc_angle = constrainf(
+            90 - RADIANS_TO_DEGREES(atan2_approx(imuMeasuredAccelBF->z, imuMeasuredAccelBF->y)),
+            -max_offset_at_degrees, max_offset_at_degrees
+        );
+    // Horizontal offset for the ball, mimics a rounded instrument
+    int offset = scaleRangef(roll_acc_angle, -max_offset_at_degrees, max_offset_at_degrees, 2, width - ball_diameter - 2);
+
+    displayCanvasClearRect(canvas, px, py, width, height);
+    displayCanvasSetStrokeColor(canvas, DISPLAY_CANVAS_COLOR_WHITE);
+    displayCanvasSetLineOutlineColor(canvas, DISPLAY_CANVAS_COLOR_BLACK);
+
+    // Indicator borders
+    // Center left
+    displayCanvasMoveToPoint(canvas, px + width / 2 - height / 2, py);
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_RIGHT);
+    displayCanvasStrokeLineToPoint(canvas, px + width / 2 - height / 2, py + height);
+    // Center right
+    displayCanvasMoveToPoint(canvas, px + width / 2 + height / 2, py);
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_LEFT);
+    displayCanvasStrokeLineToPoint(canvas, px + width / 2 + height / 2, py + height);
+    // Left
+    displayCanvasMoveToPoint(canvas, px, py + height);
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_RIGHT);
+    displayCanvasStrokeLineToPoint(canvas, px, py);
+    // Top
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_BOTTOM);
+    displayCanvasStrokeLineToPoint(canvas, px + width, py);
+    // Right
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_RIGHT);
+    displayCanvasStrokeLineToPoint(canvas, px + width, py + height);
+    // Bottom
+    displayCanvasSetLineOutlineType(canvas, DISPLAY_CANVAS_OUTLINE_TYPE_BOTTOM);
+    displayCanvasStrokeLineToPoint(canvas, px, py + height);
+    // Sliding ball
+    displayCanvasSetStrokeColor(canvas, DISPLAY_CANVAS_COLOR_BLACK);
+    displayCanvasFillStrokeEllipseInRect(canvas, px + offset, py + 1, ball_diameter, ball_diameter);
+}
+
 #endif
