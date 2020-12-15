@@ -166,7 +166,7 @@ groups:
         default_value: "1000"
         max: 9000
       - name: gyro_sync
-        description: "This option enables gyro_sync feature. In this case the loop will be synced to gyro refresh rate. Loop will always wait for the newest gyro measurement. Maximum gyro refresh rate is determined by gyro_hardware_lpf"
+        description: "This FOO option enables gyro_sync feature. In this case the loop will be synced to gyro refresh rate. Loop will always wait for the newest gyro measurement. Maximum gyro refresh rate is determined by gyro_hardware_lpf"
         default_value: "OFF"
         field: gyroSync
         type: bool
