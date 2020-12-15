@@ -210,7 +210,7 @@ groups:
         min: 0
         max: 500
       - name: gyro_stage2_lowpass_type
-        description: "Defines the type of stage 2 gyro LPF filter. Possible values: `PT1`, `BIQUAD`. `PT1` offers faster filter response while `BIQUAD` better attenuation."
+        description: "Defines the FOO type of stage 2 gyro LPF filter. Possible values: `PT1`, `BIQUAD`. `PT1` offers faster filter response while `BIQUAD` better attenuation."
         default_value: "`BIQUAD`"
         field: gyro_stage2_lowpass_type
         table: filter_type
